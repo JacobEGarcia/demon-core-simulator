@@ -32,8 +32,8 @@ button:disabled{opacity:.35;cursor:not-allowed}
 <div class="sub">tickle the dragon's tail. measure neutron flux. don't slip.</div>
 <div id="lab">
   <div id="glow"></div>
-  <div id="core">âï¸</div>
-  <div id="shell">ð©</div>
+  <div id="core">⚛️</div>
+  <div id="shell">🔩</div>
 </div>
 <div id="readout">
   <span>NEUTRON FLUX <b id="flux">12</b></span>
@@ -79,14 +79,14 @@ $('measure').onclick=()=>{
   if(S.flux>=80&&S.flux<=95){
     S.good++;
     $('msg').textContent='measurement '+S.good+'/8 logged. Louis would be proud, and also concerned.';
-    if(S.good>=8){$('msg').textContent='EIGHT CLEAN MEASUREMENTS. The dragon purrs. You publish. Legend.';$('core').textContent='ð';S.over=true;}
+    if(S.good>=8){$('msg').textContent='EIGHT CLEAN MEASUREMENTS. The dragon purrs. You publish. Legend.';$('core').textContent='🏆';S.over=true;}
   }else if(S.flux<80){$('msg').textContent='flux too low to measure ('+S.flux+'). lower the shell. carefully.';}
   else{$('msg').textContent='TOO HOT. flux '+S.flux+'. raise it NOW.';S.steady-=12;}
   render();
 };
 function end(){
   S.over=true;
-  $('core').textContent='ð¥';
+  $('core').textContent='💥';
   $('glow').style.background='radial-gradient(circle,rgba(255,220,120,.9),transparent 75%)';
   $('msg').textContent='BLUE FLASH. The screwdriver slips from history. Flux peaked at '+S.flux+'. The lab will be discussed in safety seminars forever.';
 }
