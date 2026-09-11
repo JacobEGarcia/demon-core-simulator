@@ -4,49 +4,51 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Demon Core Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel='icon' href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚛️</text></svg>">
 <style>
-:root{--bg:#0c1016;--card:#131a24;--line:#22303f;--ink:#dce9f5;--dim:#7c92a8;--accent:#5ad4ff;--bad:#ff5e4d;--warn:#ffd34d}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 18px;user-select:none}
-h1{font-size:26px;letter-spacing:6px;color:var(--accent);text-shadow:0 0 26px rgba(90,212,255,.3)}
-.sub{color:var(--dim);font-size:11px;letter-spacing:2.5px;margin-top:8px;text-transform:uppercase;text-align:center}
-#lab{position:relative;width:min(460px,92vw);height:300px;margin:22px 0;background:radial-gradient(circle at 50% 60%,#16222e,#0a0f16 75%);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-#core{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);font-size:66px;filter:drop-shadow(0 0 18px rgba(90,212,255,.25))}
+body{background:#e9e7e2;color:#1c2026;font-family:"Space Grotesk",-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 18px;user-select:none}
+h1{font-size:26px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.sub{color:#757a82;font-size:11px;letter-spacing:.16em;margin-top:8px;text-transform:uppercase;text-align:center}
+#lab{position:relative;width:min(460px,92vw);height:300px;margin:24px 0;background:radial-gradient(circle at 50% 60%,#d8dadc,#b4b7bb 75%);border:1px solid #8a8e94;border-radius:8px;overflow:hidden;box-shadow:0 12px 28px rgba(28,32,38,.16)}
+#lab::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;background:repeating-linear-gradient(45deg,#d9a514 0 16px,#1c2026 16px 32px)}
+#core{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);font-size:66px}
 #glow{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(90,160,255,.35),transparent 70%);transition:background .3s}
 #shell{position:absolute;left:50%;top:38%;transform:translateX(-50%);font-size:52px;transition:top .35s ease,transform .35s ease}
-#readout{display:flex;gap:20px;font-size:12px;color:var(--dim);letter-spacing:1.5px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
-#readout b{color:var(--accent)}
-#readout .danger{color:var(--bad)}
-#flux{font-family:inherit}
+#readout{display:flex;gap:22px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:#5a6068;letter-spacing:.08em;margin-bottom:14px;flex-wrap:wrap;justify-content:center;text-transform:uppercase}
+#readout b{color:#1c2026;font-weight:600}
+#readout .danger{color:#c23b2e}
 #actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:min(460px,92vw)}
-button{cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-family:inherit;font-size:12px;padding:13px 16px;letter-spacing:1px;transition:.15s}
-button:hover:not(:disabled){border-color:var(--accent);transform:translateY(-2px)}
+button{cursor:pointer;background:#fff;border:1px solid #b9bcc0;border-radius:6px;color:#1c2026;font-family:"Space Grotesk",sans-serif;font-size:11px;font-weight:500;padding:13px 16px;letter-spacing:.08em;text-transform:uppercase;transition:.15s}
+button:hover:not(:disabled){border-color:#1c2026}
 button:disabled{opacity:.35;cursor:not-allowed}
-#msg{margin-top:14px;font-size:12px;color:var(--dim);letter-spacing:1px;text-align:center;min-height:20px;width:min(460px,92vw);line-height:1.7}
-#hud{margin-top:6px;font-size:11.5px;color:var(--dim);letter-spacing:2px}
-#hud b{color:var(--warn)}
+#msg{margin-top:16px;font-size:12.5px;color:#5a6068;text-align:center;min-height:20px;width:min(460px,92vw);line-height:1.7;font-style:italic}
+#hud{margin-top:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:#5a6068;letter-spacing:.12em;text-transform:uppercase}
+#hud b{color:#b8860b;font-weight:600}
 </style>
 </head>
 <body>
-<h1>DEMON CORE</h1>
+<h1>Demon Core</h1>
 <div class="sub">tickle the dragon's tail. measure neutron flux. don't slip.</div>
 <div id="lab">
   <div id="glow"></div>
-  <div id="core">⚛️</div>
-  <div id="shell">🔩</div>
+  <div id="core">&#9883;&#65039;</div>
+  <div id="shell">&#128297;</div>
 </div>
 <div id="readout">
-  <span>NEUTRON FLUX <b id="flux">12</b></span>
-  <span>REFLECTOR <b id="gap">OPEN</b></span>
-  <span>STEADINESS <b id="steady">100%</b></span>
+  <span>Neutron flux <b id="flux">12</b></span>
+  <span>Reflector <b id="gap">OPEN</b></span>
+  <span>Steadiness <b id="steady">100%</b></span>
 </div>
 <div id="actions">
-  <button id="lower">LOWER REFLECTOR</button>
-  <button id="raise">RAISE REFLECTOR</button>
-  <button id="measure">MEASURE (in sweet spot)</button>
+  <button id="lower">Lower reflector</button>
+  <button id="raise">Raise reflector</button>
+  <button id="measure">Measure (in sweet spot)</button>
 </div>
 <div id="msg">lower the beryllium shell to raise reactivity. measure in the sweet spot (flux 80-95). overshoot and it's 1946 again.</div>
-<div id="hud">GOOD MEASUREMENTS <b id="good">0</b>/8</div>
+<div id="hud">Good measurements <b id="good">0</b>/8</div>
 <script>
 const S={gap:100,steady:100,flux:12,good:0,over:false};
 const $=id=>document.getElementById(id);
