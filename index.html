@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demon Core Simulator</title>
+<style>
+:root{--bg:#0c1016;--card:#131a24;--line:#22303f;--ink:#dce9f5;--dim:#7c92a8;--accent:#5ad4ff;--bad:#ff5e4d;--warn:#ffd34d}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 18px;user-select:none}
+h1{font-size:26px;letter-spacing:6px;color:var(--accent);text-shadow:0 0 26px rgba(90,212,255,.3)}
+.sub{color:var(--dim);font-size:11px;letter-spacing:2.5px;margin-top:8px;text-transform:uppercase;text-align:center}
+#lab{position:relative;width:min(460px,92vw);height:300px;margin:22px 0;background:radial-gradient(circle at 50% 60%,#16222e,#0a0f16 75%);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+#core{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);font-size:66px;filter:drop-shadow(0 0 18px rgba(90,212,255,.25))}
+#glow{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(90,160,255,.35),transparent 70%);transition:background .3s}
+#shell{position:absolute;left:50%;top:38%;transform:translateX(-50%);font-size:52px;transition:top .35s ease,transform .35s ease}
+#readout{display:flex;gap:20px;font-size:12px;color:var(--dim);letter-spacing:1.5px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+#readout b{color:var(--accent)}
+#readout .danger{color:var(--bad)}
+#flux{font-family:inherit}
+#actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:min(460px,92vw)}
+button{cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--ink);font-family:inherit;font-size:12px;padding:13px 16px;letter-spacing:1px;transition:.15s}
+button:hover:not(:disabled){border-color:var(--accent);transform:translateY(-2px)}
+button:disabled{opacity:.35;cursor:not-allowed}
+#msg{margin-top:14px;font-size:12px;color:var(--dim);letter-spacing:1px;text-align:center;min-height:20px;width:min(460px,92vw);line-height:1.7}
+#hud{margin-top:6px;font-size:11.5px;color:var(--dim);letter-spacing:2px}
+#hud b{color:var(--warn)}
+</style>
+</head>
+<body>
+<h1>DEMON CORE</h1>
+<div class="sub">tickle the dragon's tail. measure neutron flux. don't slip.</div>
+<div id="lab">
+  <div id="glow"></div>
+  <div id="core">âï¸</div>
+  <div id="shell">ð©</div>
+</div>
+<div id="readout">
+  <span>NEUTRON FLUX <b id="flux">12</b></span>
+  <span>REFLECTOR <b id="gap">OPEN</b></span>
+  <span>STEADINESS <b id="steady">100%</b></span>
+</div>
+<div id="actions">
+  <button id="lower">LOWER REFLECTOR</button>
+  <button id="raise">RAISE REFLECTOR</button>
+  <button id="measure">MEASURE (in sweet spot)</button>
+</div>
+<div id="msg">lower the beryllium shell to raise reactivity. measure in the sweet spot (flux 80-95). overshoot and it's 1946 again.</div>
+<div id="hud">GOOD MEASUREMENTS <b id="good">0</b>/8</div>
+<script>
+const S={gap:100,steady:100,flux:12,good:0,over:false};
+const $=id=>document.getElementById(id);
+const shell=$('shell');
+function render(){
+  shell.style.top=(38-(100-S.gap)*0.22)+'%';
+  shell.style.transform='translateX(-50%) rotate('+((100-S.gap)*0.6)+'deg)';
+  const f=S.flux;
+  $('flux').textContent=f;
+  $('flux').className=f>95?'danger':'';
+  $('gap').textContent=S.gap>60?'OPEN':S.gap>25?'HALF':'CLOSED';
+  $('steady').textContent=S.steady+'%';
+  $('good').textContent=S.good;
+  const glow=$('glow');
+  glow.style.background=f>95?'radial-gradient(circle,rgba(255,94,77,.6),transparent 70%)':f>80?'radial-gradient(circle,rgba(90,212,255,.55),transparent 70%)':'radial-gradient(circle,rgba(90,160,255,'+(f/300)+'),transparent 70%)';
+}
+setInterval(()=>{
+  if(S.over)return;
+  const target=12+(100-S.gap)*1.1;
+  S.flux=Math.max(8,Math.round(S.flux+(target-S.flux)*0.25+(Math.random()*6-3)));
+  if(S.flux>95){S.steady-=Math.round(2+(S.flux-95)*0.5);}
+  else if(S.steady<100&&S.flux<60)S.steady=Math.min(100,S.steady+1);
+  if(S.steady<=0||S.flux>160)return end();
+  render();
+},250);
+$('lower').onclick=()=>{if(S.over)return;S.gap=Math.max(0,S.gap-8);$('msg').textContent='shell lowered by hand, with a screwdriver, because safety culture is optional.';render();};
+$('raise').onclick=()=>{if(S.over)return;S.gap=Math.min(100,S.gap+8);$('msg').textContent='shell raised. the room exhales.';render();};
+$('measure').onclick=()=>{
+  if(S.over)return;
+  if(S.flux>=80&&S.flux<=95){
+    S.good++;
+    $('msg').textContent='measurement '+S.good+'/8 logged. Louis would be proud, and also concerned.';
+    if(S.good>=8){$('msg').textContent='EIGHT CLEAN MEASUREMENTS. The dragon purrs. You publish. Legend.';$('core').textContent='ð';S.over=true;}
+  }else if(S.flux<80){$('msg').textContent='flux too low to measure ('+S.flux+'). lower the shell. carefully.';}
+  else{$('msg').textContent='TOO HOT. flux '+S.flux+'. raise it NOW.';S.steady-=12;}
+  render();
+};
+function end(){
+  S.over=true;
+  $('core').textContent='ð¥';
+  $('glow').style.background='radial-gradient(circle,rgba(255,220,120,.9),transparent 75%)';
+  $('msg').textContent='BLUE FLASH. The screwdriver slips from history. Flux peaked at '+S.flux+'. The lab will be discussed in safety seminars forever.';
+}
+render();
+</script>
+</body>
+</html>
